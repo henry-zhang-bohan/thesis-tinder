@@ -49,3 +49,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # React.js
 gem 'react-rails'
+
+# File uploader
+gem 'carrierwave'
