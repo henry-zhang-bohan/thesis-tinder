@@ -1,5 +1,5 @@
 class Student < ApplicationRecord
-	mound_uploader :photo, PhotoUploader
+	mount_uploader :photo, PhotoUploader
 
 	belongs_to :department
 
