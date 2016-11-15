@@ -1,4 +1,4 @@
-var ThesisTinderInput = React.createClass({
+var ThesisTinderTextarea = React.createClass({
 	updateHandler: function (e) {
 		var data = e.target.value;
 		this.props.onchange(data);
@@ -29,7 +29,7 @@ var ThesisTinderInput = React.createClass({
 		return (
 			<div className={div_class}>
 				<label className="form-control-label"><b>{this.props.data.label}</b></label>
-				<input type="text" className={input_class} value={this.props.data.content} onChange={this.updateHandler} name={this.props.data.name} />
+				<textarea className={input_class} value={this.props.data.content} onChange={this.updateHandler} name={this.props.data.name} rows="4"/>
 				<div className="form-control-feedback"><small>{this.props.data.message}</small></div>
 			</div>
 		);
