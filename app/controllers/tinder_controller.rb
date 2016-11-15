@@ -12,7 +12,8 @@ class TinderController < ApplicationController
 			first_name: @professor.first_name ? @professor.first_name : "",
 			last_name: @professor.last_name ? @professor.last_name : "",
 			link: @professor.link ? @professor.link : "",
-			bio: @professor.bio ? @professor.bio : "" }
+			bio: @professor.bio ? @professor.bio : "",
+			photo: @professor.photo_url ? @professor.photo_url : ActionController::Base.helpers.image_path('photo.png') }
 	end
 
 	def update_professor_info
@@ -22,6 +23,7 @@ class TinderController < ApplicationController
 		@professor.update_attribute(:last_name, params[:last_name])
 		@professor.update_attribute(:link, params[:link])
 		@professor.update_attribute(:bio, params[:bio])
+		@professor.update_attribute(:photo, params[:photo])
 
 		redirect_back(fallback_location: "/professor")
 	end

@@ -36,6 +36,13 @@ var UserProfile = React.createClass({
 				message: "",
 				name: "bio"
 			},
+			photo: {
+				content: "",
+				label: "Photo",
+				status: "",
+				message: "",
+				name: "photo"
+			},
 			user: {
 				id: this.props.id
 			},
@@ -56,6 +63,7 @@ var UserProfile = React.createClass({
 			var validate_last_name = self.validateName(data["last_name"], "last name");
 			var validate_link = self.validateLink(data["link"]);
 			var validate_bio = self.validateBio(data["bio"]);
+			var validate_photo = self.validatePhoto(data["photo"]);
 			self.setState({
 				email: {
 					content: data["email"],
@@ -91,6 +99,13 @@ var UserProfile = React.createClass({
 					status: validate_bio[0],
 					message: validate_bio[1],
 					name: "bio"
+				},
+				photo: {
+					content: data["photo"],
+					label: "Photo",
+					status: validate_photo[0],
+					message: validate_photo[1],
+					name: "photo"
 				}
 			});
 		});
@@ -222,6 +237,29 @@ var UserProfile = React.createClass({
 			}
 		});
 	},
+	validatePhoto: function (photo) {
+		if (photo.length === 0) {
+			var status = "";
+			var message = "Upload an image to show who you are.";
+		}
+		else {
+			var status = "success";
+			var message = "Your photo looks good.";
+		}
+		return [status, message];
+	},
+	updatePhoto: function (photo) {
+		var validate_photo = this.validatePhoto(photo);
+		this.setState({
+			photo: {
+				content: photo,
+				label: "Photo",
+				status: validate_photo[0],
+				message: validate_photo[1],
+				name: "photo"
+			}
+		});
+	},
 	render: function () {
 		return (
 			<div className="container">
@@ -237,6 +275,7 @@ var UserProfile = React.createClass({
 							<ThesisTinderInput data={this.state.last_name} onchange={this.updateLastName} />
 							<ThesisTinderInput data={this.state.link} onchange={this.updateLink} />
 							<ThesisTinderTextarea data={this.state.bio} onchange={this.updateBio} />
+							<ThesisTinderFileInput data={this.state.photo} onchange={this.updatePhoto} />
 							<div style={{ textAlign: "right" }}>
 								<button type="submit" className="btn btn-secondary">Update</button>
 							</div>
@@ -246,7 +285,7 @@ var UserProfile = React.createClass({
 					<div className="col-md-4">
 						<UserCard title={this.state.first_name.content + " " + this.state.last_name.content}
 						subtitle="Engineering Science" link={this.state.link.content}
-						imageURL="https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAbxAAAAJDYzMThmMGI5LWFiNTItNGEwZC1hMTM5LWZhOWM4YmRjMWI3Nw.jpg"
+						imageURL={this.state.photo.content}
 						text={this.state.bio.content} />
 					</div>
 					<div className="col-md-1"></div>
