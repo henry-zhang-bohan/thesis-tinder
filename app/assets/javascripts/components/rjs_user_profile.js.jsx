@@ -325,7 +325,7 @@ var UserProfile = React.createClass({
 	},
 	updateSkill: function (skill) {
 		var self = this;
-		if (skill.length === 0) {
+		if ($.trim(skill).length === 0) {
 			this.setState({
 				skill: {
 					content: skill,
@@ -385,9 +385,9 @@ var UserProfile = React.createClass({
 		}
 	},
 	addSkill: function (skill) {
-		if (this.state.skill.tags.indexOf(skill) !== -1) { return; }
+		if (this.state.skill.tags.indexOf(skill) !== -1 || $.trim(skill).length === 0) { return; }
 		var new_tags = this.state.skill.tags;
-		new_tags.push(skill);
+		new_tags.push($.trim(skill));
 		this.setState({
 			skill: {
 				content: "",
@@ -430,9 +430,8 @@ var UserProfile = React.createClass({
 							<ThesisTinderInput data={this.state.link} onchange={this.updateLink} />
 							<ThesisTinderTextarea data={this.state.bio} onchange={this.updateBio} />
 							<ThesisTinderFileInput data={this.state.photo} onchange={this.updatePhoto} />
-							<hr />
 							<ThesisTinderTagInput data={this.state.skill} onchange={this.updateSkill} onadd={this.addSkill} onremove={this.removeSkill} autocompleteURL="/autocomplete_skill" />
-							<div style={{ textAlign: "right" }}>
+							<div style={{ paddingTop: 25 }}>
 								<button type="submit" className="btn btn-secondary">Update</button>
 							</div>
 						</form>

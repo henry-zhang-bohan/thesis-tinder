@@ -1,8 +1,33 @@
 var UserCard = React.createClass({
+	getInitialState: function () {
+		return {
+			detail: "Show Details",
+			expanded: false,
+			display: "none"
+		};
+	},
+	detailHandler: function (e) {
+		if (this.state.expanded === false) {
+			this.setState({
+				detail: "Hide Details",
+				expanded: true,
+				display: "block"
+			});
+		}
+		else {
+			this.setState({
+				detail: "Show Details",
+				expanded: false,
+				display: "none"
+			});
+		}
+		e.preventDefault();
+		e.target.blur();
+	},
 	render: function () {
 		var skill_tags = [];
 		for (var i = 0; i < this.props.skill_tags.length; i++) {
-			skill_tags.push(<ThesisTinderTag text={this.props.skill_tags[i]} canremove="false" />);
+			skill_tags.push(<ThesisTinderTag text={this.props.skill_tags[i]} canremove="false" key={this.props.skill_tags[i]} />);
 		}
 		return (
 			<div className="card">
@@ -15,9 +40,9 @@ var UserCard = React.createClass({
 				<div className="card-block">
 					<p className="card-text">{this.props.text}</p>
 					<hr />
-					<p className="card-text">{skill_tags}</p>
-					<hr />
+					<div className="card-text" style={{ display: this.state.display, margin: 0 }}>{skill_tags}<hr /></div>
 					<a href={this.props.link} className="card-link" target="_blank">Link</a>
+					<a href="#" className="card-link" onClick={this.detailHandler}>{this.state.detail}</a>
 				</div>
 			</div>
 		);

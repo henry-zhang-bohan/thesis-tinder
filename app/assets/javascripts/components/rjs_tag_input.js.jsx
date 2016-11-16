@@ -53,6 +53,7 @@ var ThesisTinderTagInput = React.createClass({
 		}
 		return (
 			<div className={div_class}>
+				<label className="form-control-label"><b>{this.props.data.label}</b></label>
 				<div>{thesis_tinder_tags}</div>
 				<div style={{ height: 10 }}></div>
 				<div className="input-group">
