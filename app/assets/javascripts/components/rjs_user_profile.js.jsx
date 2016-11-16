@@ -22,6 +22,14 @@ var UserProfile = React.createClass({
 				message: "",
 				name: "last_name"
 			},
+			department: {
+				content: "",
+				label: "Department",
+				status: "",
+				message: "",
+				name: "department",
+				autocompleteURL: "/autocomplete_department"
+			},
 			link: {
 				content: "",
 				label: "Link",
@@ -61,6 +69,7 @@ var UserProfile = React.createClass({
 			var validate_email = self.validateEmail(data["email"]);
 			var validate_first_name = self.validateName(data["first_name"], "first name");
 			var validate_last_name = self.validateName(data["last_name"], "last name");
+			var validate_department = self.validateDepartment(data["department"], data["department_list"])
 			var validate_link = self.validateLink(data["link"]);
 			var validate_bio = self.validateBio(data["bio"]);
 			var validate_photo = self.validatePhoto(data["photo"]);
@@ -85,6 +94,15 @@ var UserProfile = React.createClass({
 					status: validate_last_name[0],
 					message: validate_last_name[1],
 					name: "last_name"
+				},
+				department: {
+					content: data["department"],
+					label: "Department",
+					status: validate_department[0],
+					message: validate_department[1],
+					name: "department",
+					autocompleteURL: "/autocomplete_department",
+					list: data["department_list"]
 				},
 				link: {
 					content: data["link"],
@@ -171,6 +189,35 @@ var UserProfile = React.createClass({
 				status: validate_name[0],
 				message: validate_name[1],
 				name: "last_name"
+			}
+		});
+	},
+	validateDepartment: function (department, department_list) {
+		if (department_list.indexOf(department) !== -1) {
+			var status = "success";
+			var message = department + " sounds like home.";
+		}
+		else if (department.length === 0 || /^[a-zA-Z ]+$/g.test(department) === false) {
+			var status = "danger";
+			var message = "Please input a valid department name.";
+		}
+		else {
+			var status = "warning";
+			var message = "Attention: you are creating a new department called \"" + department + "\"";
+		}
+		return [status, message];
+	},
+	updateDepartment: function (department) {
+		var validate_department = this.validateDepartment(department, this.state.department.list);
+		this.setState({
+			department: {
+				content: department,
+				label: "Department",
+				status: validate_department[0],
+				message: validate_department[1],
+				name: "department",
+				autocompleteURL: "/autocomplete_department",
+				list: this.state.department.list
 			}
 		});
 	},
@@ -273,6 +320,7 @@ var UserProfile = React.createClass({
 							<ThesisTinderInput data={this.state.email} onchange={this.updateEmail} />
 							<ThesisTinderInput data={this.state.first_name} onchange={this.updateFirstName} />
 							<ThesisTinderInput data={this.state.last_name} onchange={this.updateLastName} />
+							<ThesisTinderInput data={this.state.department} onchange={this.updateDepartment} autocompleteURL={this.state.department.autocompleteURL} />
 							<ThesisTinderInput data={this.state.link} onchange={this.updateLink} />
 							<ThesisTinderTextarea data={this.state.bio} onchange={this.updateBio} />
 							<ThesisTinderFileInput data={this.state.photo} onchange={this.updatePhoto} />
@@ -284,7 +332,7 @@ var UserProfile = React.createClass({
 					</div>
 					<div className="col-md-4">
 						<UserCard title={this.state.first_name.content + " " + this.state.last_name.content}
-						subtitle="Engineering Science" link={this.state.link.content}
+						subtitle={this.state.department.content} link={this.state.link.content}
 						imageURL={this.state.photo.content}
 						text={this.state.bio.content} />
 					</div>

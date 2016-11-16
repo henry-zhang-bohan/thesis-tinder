@@ -52,3 +52,6 @@ gem 'react-rails'
 
 # File uploader
 gem 'carrierwave'
+
+# jQuery UI
+gem 'jquery-ui-rails'
