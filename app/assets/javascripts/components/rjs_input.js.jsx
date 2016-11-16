@@ -14,6 +14,11 @@ var ThesisTinderInput = React.createClass({
 		var data = e.target.value;
 		this.props.onchange(data);
 	},
+	keyPressHandler: function (e) {
+		if (e.which == 13) {
+			e.preventDefault();
+		}
+	},
 	determineStatus: function (status) {
 		if (status === "success") {
 			var div_class = "form-group has-success";
@@ -40,7 +45,7 @@ var ThesisTinderInput = React.createClass({
 		return (
 			<div className={div_class}>
 				<label className="form-control-label"><b>{this.props.data.label}</b></label>
-				<input type="text" className={input_class} value={this.props.data.content} onChange={this.updateHandler} name={this.props.data.name} ref="input" />
+				<input type="text" className={input_class} value={this.props.data.content} onChange={this.updateHandler} name={this.props.data.name} onKeyPress={this.keyPressHandler} ref="input" />
 				<div className="form-control-feedback"><small>{this.props.data.message}</small></div>
 			</div>
 		);

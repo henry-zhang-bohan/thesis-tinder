@@ -16,7 +16,8 @@ class TinderController < ApplicationController
 			bio: @professor.bio ? @professor.bio : "",
 			photo: @professor.photo_url ? @professor.photo_url : ActionController::Base.helpers.image_path('photo.png'),
 			department: @professor.department ? @professor.department.name : "",
-			department_list: Department.all.map { |department| department.name }
+			department_list: Department.all.map { |department| department.name },
+			skill: @professor.professor_skills.map { |professor_skill| professor_skill.skill.name }
 		}
 	end
 
@@ -38,10 +39,38 @@ class TinderController < ApplicationController
 			@professor.update_attribute(:department, @department)
 		end
 
+		# skills
+		@professor.professor_skills.each do |professor_skill|
+			professor_skill.destroy()
+		end
+		@skills = params[:skill].to_s.split(",")
+		@skills.each do |skill|
+			@skill = Skill.find_by(name: skill)
+			if @skill != nil
+				ProfessorSkill.create(professor: @professor, skill: @skill)
+			else
+				@skill = Skill.create(name: skill)
+				ProfessorSkill.create(professor: @professor, skill: @skill)
+			end
+		end
+
 		redirect_back(fallback_location: "/professor")
 	end
 
 	def autocomplete_department
 		render :json => Department.where("LOWER(name) LIKE '%#{params[:term]}%'").map { |department| { label: department.name, value: department.name } }
+	end
+
+	def autocomplete_skill
+		render :json => Skill.where("LOWER(name) LIKE '%#{params[:term]}%'").map { |skill| { label: skill.name, value: skill.name } }
+	end
+
+	def check_skill
+		if Skill.find_by(name: params[:skill]) != nil
+			@result = "yes"
+		else
+			@result = "no"
+		end
+		render :json => { :existing => @result }
 	end
 end

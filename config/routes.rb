@@ -6,4 +6,7 @@ Rails.application.routes.draw do
 	post '/update_professor_info' => 'tinder#update_professor_info'
 
 	get '/autocomplete_department' => 'tinder#autocomplete_department'
+	get '/autocomplete_skill' => 'tinder#autocomplete_skill'
+
+	get '/check_skill' => 'tinder#check_skill'
 end

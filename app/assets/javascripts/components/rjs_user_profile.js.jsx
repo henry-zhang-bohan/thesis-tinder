@@ -51,6 +51,14 @@ var UserProfile = React.createClass({
 				message: "",
 				name: "photo"
 			},
+			skill: {
+				content: "",
+				label: "Skill",
+				status: "",
+				message: "",
+				name: "skill",
+				tags: []
+			},
 			user: {
 				id: this.props.id
 			},
@@ -124,6 +132,14 @@ var UserProfile = React.createClass({
 					status: validate_photo[0],
 					message: validate_photo[1],
 					name: "photo"
+				},
+				skill: {
+					content: "",
+					label: "Skill",
+					status: "",
+					message: self.props.type === "professor" ? "What skills do you expect from your research assistants?" : "Demonstrate your skill set to impress professors.",
+					name: "skill",
+					tags: data["skill"]
 				}
 			});
 		});
@@ -307,6 +323,96 @@ var UserProfile = React.createClass({
 			}
 		});
 	},
+	updateSkill: function (skill) {
+		var self = this;
+		if (skill.length === 0) {
+			this.setState({
+				skill: {
+					content: skill,
+					label: "Skill",
+					status: "",
+					message: this.props.type === "professor" ? "What skills do you expect from your research assistants?" : "Demonstrate your skill set to impress professors.",
+					name: "skill",
+					tags: this.state.skill.tags
+				}
+			});
+		}
+		else if (this.state.skill.tags.indexOf(skill) !== -1) {
+			this.setState({
+				skill: {
+					content: skill,
+					label: "Skill",
+					status: "danger",
+					message: "\"" + String(skill) + "\" is already in your skill set.",
+					name: "skill",
+					tags: this.state.skill.tags
+				}
+			});
+		}
+		else {
+			$.ajax({
+				method: "GET",
+				url: "/check_skill",
+				dataType: "json",
+				data: { skill: skill }
+			})
+			.done(function (data) {
+				if (data["existing"] === "yes") {
+					self.setState({
+						skill: {
+							content: skill,
+							label: "Skill",
+							status: "success",
+							message: "\"" + String(skill) + "\" is good to have!",
+							name: "skill",
+							tags: self.state.skill.tags
+						}
+					});
+				}
+				else if (data["existing"] === "no") {
+					self.setState({
+						skill: {
+							content: skill,
+							label: "Skill",
+							status: "warning",
+							message: "Attention: you are creating a new skill \"" + String(skill) + "\".",
+							name: "skill",
+							tags: self.state.skill.tags
+						}
+					});
+				}
+			});
+		}
+	},
+	addSkill: function (skill) {
+		if (this.state.skill.tags.indexOf(skill) !== -1) { return; }
+		var new_tags = this.state.skill.tags;
+		new_tags.push(skill);
+		this.setState({
+			skill: {
+				content: "",
+				label: "Skill",
+				status: "",
+				message: this.props.type === "professor" ? "What skills do you expect from your research assistants?" : "Demonstrate your skill set to impress professors.",
+				name: "skill",
+				tags: new_tags
+			}
+		});
+	},
+	removeSkill: function (skill) {
+		var new_tags = this.state.skill.tags;
+		new_tags.splice(new_tags.indexOf(skill), 1)
+		this.setState({
+			skill: {
+				content: this.state.skill.content,
+				label: "Skill",
+				status: this.state.skill.status,
+				message: this.state.skill.message,
+				name: "skill",
+				tags: new_tags
+			}
+		});
+	},
 	render: function () {
 		return (
 			<div className="container">
@@ -324,6 +430,8 @@ var UserProfile = React.createClass({
 							<ThesisTinderInput data={this.state.link} onchange={this.updateLink} />
 							<ThesisTinderTextarea data={this.state.bio} onchange={this.updateBio} />
 							<ThesisTinderFileInput data={this.state.photo} onchange={this.updatePhoto} />
+							<hr />
+							<ThesisTinderTagInput data={this.state.skill} onchange={this.updateSkill} onadd={this.addSkill} onremove={this.removeSkill} autocompleteURL="/autocomplete_skill" />
 							<div style={{ textAlign: "right" }}>
 								<button type="submit" className="btn btn-secondary">Update</button>
 							</div>
@@ -334,7 +442,8 @@ var UserProfile = React.createClass({
 						<UserCard title={this.state.first_name.content + " " + this.state.last_name.content}
 						subtitle={this.state.department.content} link={this.state.link.content}
 						imageURL={this.state.photo.content}
-						text={this.state.bio.content} />
+						text={this.state.bio.content}
+						skill_tags={this.state.skill.tags} />
 					</div>
 					<div className="col-md-1"></div>
 				</div>

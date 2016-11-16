@@ -1,5 +1,9 @@
 var UserCard = React.createClass({
 	render: function () {
+		var skill_tags = [];
+		for (var i = 0; i < this.props.skill_tags.length; i++) {
+			skill_tags.push(<ThesisTinderTag text={this.props.skill_tags[i]} canremove="false" />);
+		}
 		return (
 			<div className="card">
 				<div className="card-block">
@@ -10,6 +14,9 @@ var UserCard = React.createClass({
 				style={{ width: "100%", height: 200, objectFit: "cover" }} />
 				<div className="card-block">
 					<p className="card-text">{this.props.text}</p>
+					<hr />
+					<p className="card-text">{skill_tags}</p>
+					<hr />
 					<a href={this.props.link} className="card-link" target="_blank">Link</a>
 				</div>
 			</div>
