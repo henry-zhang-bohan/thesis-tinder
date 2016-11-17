@@ -1,5 +1,6 @@
 class TinderController < ApplicationController
-	before_action :require_user, only: [ :autocomplete_department, :autocomplete_skill, :autocomplete_keyword ]
+	before_action :require_user, only: [ :index, :autocomplete_department, :autocomplete_skill, :autocomplete_keyword ]
+	before_action :require_student, only: [ :student_profile, :get_student_info, :update_student_info ]
 	before_action :require_professor, only: [ :professor_profile, :get_professor_info, :update_professor_info ]
 
 	def index
@@ -33,6 +34,12 @@ class TinderController < ApplicationController
 		end
 	end
 
+	def logout
+		cookies.delete(:identity)
+		cookies.delete(:id)
+		return redirect_to '/login'
+	end
+
 	def professor_profile
 		return render 'tinder/professor_profile'
 	end
@@ -51,6 +58,31 @@ class TinderController < ApplicationController
 			skill: @professor.professor_skills.map { |professor_skill| professor_skill.skill.name },
 			keyword: @professor.professor_keywords.map { |professor_keyword| professor_keyword.keyword.name }
 		}
+	end
+
+	def get_ranked_professor_info
+		if current_student.likes != nil
+			@likes = current_student.likes.split(',')
+		else
+			@likes = []
+		end
+		@professor_list = []
+		Professor.all.each do |professor|
+			@professor_list.push({
+				id: professor.id,
+				identifier: "professor_#{professor.id}",
+				first_name: professor.first_name ? professor.first_name : "",
+				last_name: professor.last_name ? professor.last_name : "",
+				link: professor.link ? professor.link : "",
+				bio: professor.bio ? professor.bio : "",
+				photo: professor.photo_url ? professor.photo_url : ActionController::Base.helpers.image_path('photo.png'),
+				department: professor.department ? professor.department.name : "",
+				skill: professor.professor_skills.map { |professor_skill| professor_skill.skill.name },
+				keyword: professor.professor_keywords.map { |professor_keyword| professor_keyword.keyword.name },
+				like: @likes.include?(professor.id.to_s)
+			})
+		end
+		return render :json => @professor_list
 	end
 
 	def update_professor_info
@@ -101,7 +133,7 @@ class TinderController < ApplicationController
 			end
 		end
 
-		redirect_back(fallback_location: "/professor")
+		return redirect_to '/'
 	end
 
 	def student_profile
@@ -122,6 +154,31 @@ class TinderController < ApplicationController
 			skill: @student.student_skills.map { |student_skill| student_skill.skill.name },
 			keyword: @student.student_keywords.map { |student_keyword| student_keyword.keyword.name }
 		}
+	end
+
+	def get_ranked_student_info
+		if current_professor.likes != nil
+			@likes = current_professor.likes.split(',')
+		else
+			@likes = []
+		end
+		@student_list = []
+		Student.all.each do |student|
+			@student_list.push({
+				id: student.id,
+				identifier: "student_#{student.id}",
+				first_name: student.first_name ? student.first_name : "",
+				last_name: student.last_name ? student.last_name : "",
+				link: student.link ? student.link : "",
+				bio: student.bio ? student.bio : "",
+				photo: student.photo_url ? student.photo_url : ActionController::Base.helpers.image_path('photo.png'),
+				department: student.department ? student.department.name : "",
+				skill: student.student_skills.map { |student_skill| student_skill.skill.name },
+				keyword: student.student_keywords.map { |student_keyword| student_keyword.keyword.name },
+				like: @likes.include?(student.id.to_s)
+			})
+		end
+		return render :json => @student_list
 	end
 
 	def update_student_info
@@ -172,7 +229,7 @@ class TinderController < ApplicationController
 			end
 		end
 
-		redirect_back(fallback_location: "/student")
+		return redirect_to '/'
 	end
 
 	def autocomplete_department
@@ -203,5 +260,90 @@ class TinderController < ApplicationController
 			@result = "no"
 		end
 		render :json => { :existing => @result }
+	end
+
+	def like
+		if params[:identity] == 'student'
+			# current user is a student
+			@like ||= Professor.find_by(id: params[:id])
+			@me = current_student
+		elsif params[:identity] == 'professor'
+			# current user is a professor
+			@like ||= Student.find_by(id: params[:id])
+			@me = current_professor
+		end
+
+		if @like == nil || @me == nil
+			return render :json => { :status => 404 }
+		end
+
+		@my_likes = []
+		@my_likes = @me.likes.split(',') if @me.likes != nil
+		@my_likes.push(params[:id].to_s)
+		@me.update_attribute(:likes, @my_likes.uniq.join(','))
+
+		# identity assignment
+		if params[:identity] == 'student'
+			@student = @me
+			@professor = @like
+		elsif params[:identity] == 'professor'
+			@student = @like
+			@professor = @me
+		end
+
+		# check matches
+		if @like.likes != nil && @like.likes.split(',').include?(@me.id.to_s)
+			# It's a match!
+			@match = Match.find_by(student: @student, professor: @professor)
+			@match ||= Match.create(student: @student, professor: @professor) if @match == nil
+
+			if @match.deleted_at == nil
+				# send email when it's first time matching
+				UserMailer.match(@student, @professor).deliver_later
+			end
+			@match.update_attribute(:deleted_at, nil)
+
+			return render :json => { match: true,
+			message: "You are matched with #{@like.first_name} #{@like.last_name}. Send greetings to your match @ <a href='mailto: #{@like.email}'>#{@like.email}</a>" }
+		else
+			# no match
+			return render :json => { match: false }
+		end
+	end
+
+	def dislike
+		if params[:identity] == 'student'
+			# current user is a student
+			@dislike ||= Professor.find_by(id: params[:id])
+			@me = current_student
+		elsif params[:identity] == 'professor'
+			# current user is a professor
+			@dislike ||= Student.find_by(id: params[:id])
+			@me = current_professor
+		end
+
+		if @dislike == nil || @me == nil
+			return render :json => { :status => 404 }
+		end
+
+		@my_likes = []
+		@my_likes = @me.likes.split(',') if @me.likes != nil
+		@my_likes.delete(params[:id].to_s)
+		@me.update_attribute(:likes, @my_likes.uniq.join(','))
+
+		# identity assignment
+		if params[:identity] == 'student'
+			@student = @me
+			@professor = @dislike
+		elsif params[:identity] == 'professor'
+			@student = @dislike
+			@professor = @me
+		end
+
+		# delete matches accordingly
+		@match = Match.find_by(student: @student, professor: @professor)
+		@match.update_attribute(:deleted_at, DateTime.now) if @match != nil
+
+		return render :json => { :success => true }
 	end
 end

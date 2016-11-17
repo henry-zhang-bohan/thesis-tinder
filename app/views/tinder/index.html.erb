@@ -1,1 +1,7 @@
-<%= react_component('ThesisTinder') %>
+<%= react_component('ThesisTinderNavbar', profileLink: '/' + cookies.signed[:identity]) %>
+
+<% if cookies.signed[:identity] == "student" %>
+	<%= react_component('ThesisTinder', identity: "student", id: cookies.signed[:id], getLink: "/get_ranked_professor_info") %>
+<% elsif cookies.signed[:identity] == "professor" %>
+	<%= react_component('ThesisTinder', identity: "professor", id: cookies.signed[:id], getLink: "/get_ranked_student_info") %>
+<% end %>

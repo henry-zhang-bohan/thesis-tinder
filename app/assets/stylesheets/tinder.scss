@@ -38,3 +38,19 @@
 		background-color: rgb(225, 225, 225);
 	}
 }
+
+.tt-heart-liked {
+	color: red;
+	font-size: 1rem;
+	cursor: pointer;
+}
+
+.tt-heart {
+	color: rgba(255, 0, 0, 0.4);
+	font-size: 1rem;
+	cursor: pointer;
+}
+
+.tt-heart:hover {
+	color: red;
+}

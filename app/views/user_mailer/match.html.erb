@@ -1,0 +1,54 @@
+<p>Dear <%= @professor.first_name ? @professor.first_name.capitalize : 'Professor' %> and <%= @student.first_name ? @student.first_name.capitalize : 'Student' %>,<p>
+
+<br />
+
+<p>You are a match on Teza, the platform for thesis collaboration. Here's the information of you two:</p>
+
+<br />
+
+<table style="width: 100%;">
+	<tr>
+		<th></th>
+		<th>Professor</th>
+		<th>Student</th>
+	</tr>
+	<tr>
+		<td><b>Name</b></td>
+		<td><%= @professor.first_name %> <%= @professor.last_name %></td>
+		<td><%= @student.first_name %> <%= @student.last_name %></td>
+	</tr>
+	<tr>
+		<td><b>Department</b></td>
+		<td><%= @professor.department.name %></td>
+		<td><%= @student.department.name %></td>
+	</tr>
+	<tr>
+		<td><b>Email</b></td>
+		<td><a href="mailto:<%= @professor.email %>"><%= @professor.email %></a></td>
+		<td><a href="mailto:<%= @student.email %>"><%= @student.email %></a></td>
+	</tr>
+	<tr>
+		<td><b>Link</b></td>
+		<td><a href="<%= @professor.link %>"><%= @professor.link %></a></td>
+		<td><a href="<%= @student.link %>"><%= @student.link %></a></td>
+	</tr>
+	<tr>
+		<td><b>Keywords</b></td>
+		<td><%= @professor.professor_keywords.map{ |professor_keyword| professor_keyword.keyword.name }.join(', ') %></td>
+		<td><%= @student.student_keywords.map{ |student_keyword| student_keyword.keyword.name }.join(', ') %></td>
+	</tr>
+	<tr>
+		<td><b>Skills</b></td>
+		<td><%= @professor.professor_skills.map{ |professor_skill| professor_skill.skill.name }.join(', ') %></td>
+		<td><%= @student.student_skills.map{ |student_skill| student_skill.skill.name }.join(', ') %></td>
+	</tr>
+	<tr>
+		<td><b>Bio</b></td>
+		<td><%= @professor.bio %></td>
+		<td><%= @student.bio %></td>
+	</tr>
+</table>
+
+<br />
+
+<p>Cheers,<br />Teza Team</p>

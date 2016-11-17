@@ -11,6 +11,9 @@ var ThesisTinderNavbar = React.createClass({
 						<li className="nav-item">
 							<a className="nav-link" href={this.props.profileLink}>PROFILE</a>
 						</li>
+						<li className="nav-item">
+							<a className="nav-link" href="/logout">LOGOUT</a>
+						</li>
 					</ul>
 				</div>
 			</nav>

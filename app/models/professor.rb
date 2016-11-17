@@ -6,4 +6,5 @@ class Professor < ApplicationRecord
 	has_many :professor_skills
 	has_many :professor_topics
 	has_many :professor_keywords
+	has_many :matches
 end

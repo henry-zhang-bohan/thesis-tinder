@@ -6,4 +6,5 @@ class Student < ApplicationRecord
 	has_many :student_skills
 	has_many :student_topics
 	has_many :student_keywords
+	has_many :matches
 end

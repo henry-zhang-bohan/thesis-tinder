@@ -546,8 +546,10 @@ var UserProfile = React.createClass({
 						<br />
 					</div>
 					<div className="col-md-4">
-						<UserCard title={this.state.first_name.content + " " + this.state.last_name.content}
-						subtitle={this.state.department.content} link={this.state.link.content}
+						<UserCard
+						title={this.state.first_name.content + " " + this.state.last_name.content}
+						subtitle={this.state.department.content}
+						link={this.state.link.content}
 						imageURL={this.state.photo.content}
 						text={this.state.bio.content}
 						skill_tags={this.state.skill.tags}
