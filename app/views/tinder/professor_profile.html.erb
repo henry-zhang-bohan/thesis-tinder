@@ -1,1 +1,2 @@
-<%= react_component('UserProfile', getAction: "/get_professor_info", updateAction: "/update_professor_info", type: "professor", id: "1") %>
+<%= react_component('ThesisTinderNavbar', profileLink: "/professor") %>
+<%= react_component('UserProfile', getAction: "/get_professor_info", updateAction: "/update_professor_info", type: "professor", id: cookies.signed[:id]) %>

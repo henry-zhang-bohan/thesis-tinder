@@ -87,7 +87,7 @@ var ThesisTinderTag = React.createClass({
 		else {
 			return (
 				<span className="tt-tag-container">
-					<span className="tt-tag no-close">
+					<span className="tt-tag no-close" style={{ backgroundColor: this.props.color }}>
 						<span className="tt-tag-text">{this.props.text}</span>
 					</span>
 				</span>

@@ -1,0 +1,2 @@
+<%= react_component('ThesisTinderNavbar', profileLink: "/student") %>
+<%= react_component('UserProfile', getAction: "/get_student_info", updateAction: "/update_student_info", type: "student", id: cookies.signed[:id]) %>

@@ -3,7 +3,7 @@ class Student < ApplicationRecord
 
 	belongs_to :department
 
-	has_many :skills, :through => :student_skills
-	has_many :topics, :through => :student_topics
-	has_many :keywords, :through => :student_keywords
+	has_many :student_skills
+	has_many :student_topics
+	has_many :student_keywords
 end

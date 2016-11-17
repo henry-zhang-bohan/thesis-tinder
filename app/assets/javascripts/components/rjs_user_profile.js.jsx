@@ -59,6 +59,14 @@ var UserProfile = React.createClass({
 				name: "skill",
 				tags: []
 			},
+			keyword: {
+				content: "",
+				label: "Keyword",
+				status: "",
+				message: "",
+				name: "keyword",
+				tags: []
+			},
 			user: {
 				id: this.props.id
 			},
@@ -140,6 +148,14 @@ var UserProfile = React.createClass({
 					message: self.props.type === "professor" ? "What skills do you expect from your research assistants?" : "Demonstrate your skill set to impress professors.",
 					name: "skill",
 					tags: data["skill"]
+				},
+				keyword: {
+					content: "",
+					label: "Keyword",
+					status: "",
+					message: self.props.type === "professor" ? "Please include all keywords related to your research areas." : "Please include research topics you are interested in.",
+					name: "keyword",
+					tags: data["keyword"]
 				}
 			});
 		});
@@ -413,10 +429,100 @@ var UserProfile = React.createClass({
 			}
 		});
 	},
+	updateKeyword: function (keyword) {
+		var self = this;
+		if ($.trim(keyword).length === 0) {
+			this.setState({
+				keyword: {
+					content: keyword,
+					label: "Keyword",
+					status: "",
+					message: self.props.type === "professor" ? "Please include all keywords related to your research areas." : "Please include research topics you are interested in.",
+					name: "keyword",
+					tags: this.state.keyword.tags
+				}
+			});
+		}
+		else if (this.state.keyword.tags.indexOf(keyword) !== -1) {
+			this.setState({
+				keyword: {
+					content: keyword,
+					label: "Keyword",
+					status: "danger",
+					message: "\"" + String(keyword) + "\" is already in your keyword list.",
+					name: "keyword",
+					tags: this.state.keyword.tags
+				}
+			});
+		}
+		else {
+			$.ajax({
+				method: "GET",
+				url: "/check_keyword",
+				dataType: "json",
+				data: { keyword: keyword }
+			})
+			.done(function (data) {
+				if (data["existing"] === "yes") {
+					self.setState({
+						keyword: {
+							content: keyword,
+							label: "Keyword",
+							status: "success",
+							message: "\"" + String(keyword) + "\" sounds like an interesting keyword!",
+							name: "keyword",
+							tags: self.state.keyword.tags
+						}
+					});
+				}
+				else if (data["existing"] === "no") {
+					self.setState({
+						keyword: {
+							content: keyword,
+							label: "Keyword",
+							status: "warning",
+							message: "Attention: you are creating a new keyword \"" + String(keyword) + "\".",
+							name: "keyword",
+							tags: self.state.keyword.tags
+						}
+					});
+				}
+			});
+		}
+	},
+	addKeyword: function (keyword) {
+		if (this.state.keyword.tags.indexOf(keyword) !== -1 || $.trim(keyword).length === 0) { return; }
+		var new_tags = this.state.keyword.tags;
+		new_tags.push($.trim(keyword));
+		this.setState({
+			keyword: {
+				content: "",
+				label: "Keyword",
+				status: "",
+				message: this.props.type === "professor" ? "Please include all keywords related to your research areas." : "Please include research topics you are interested in.",
+				name: "keyword",
+				tags: new_tags
+			}
+		});
+	},
+	removeKeyword: function (keyword) {
+		var new_tags = this.state.keyword.tags;
+		new_tags.splice(new_tags.indexOf(keyword), 1)
+		this.setState({
+			keyword: {
+				content: this.state.keyword.content,
+				label: "Keyword",
+				status: this.state.keyword.status,
+				message: this.state.keyword.message,
+				name: "keyword",
+				tags: new_tags
+			}
+		});
+	},
 	render: function () {
 		return (
 			<div className="container">
-				<div style={{ paddingTop: 50 }}></div>
+				<div style={{ paddingTop: 100 }}></div>
 				<div className="row">
 					<div className="col-md-1"></div>
 					<div className="col-md-6">
@@ -430,6 +536,8 @@ var UserProfile = React.createClass({
 							<ThesisTinderInput data={this.state.link} onchange={this.updateLink} />
 							<ThesisTinderTextarea data={this.state.bio} onchange={this.updateBio} />
 							<ThesisTinderFileInput data={this.state.photo} onchange={this.updatePhoto} />
+							<hr />
+							<ThesisTinderTagInput data={this.state.keyword} onchange={this.updateKeyword} onadd={this.addKeyword} onremove={this.removeKeyword} autocompleteURL="/autocomplete_keyword" />
 							<ThesisTinderTagInput data={this.state.skill} onchange={this.updateSkill} onadd={this.addSkill} onremove={this.removeSkill} autocompleteURL="/autocomplete_skill" />
 							<div style={{ paddingTop: 25 }}>
 								<button type="submit" className="btn btn-secondary">Update</button>
@@ -442,7 +550,8 @@ var UserProfile = React.createClass({
 						subtitle={this.state.department.content} link={this.state.link.content}
 						imageURL={this.state.photo.content}
 						text={this.state.bio.content}
-						skill_tags={this.state.skill.tags} />
+						skill_tags={this.state.skill.tags}
+						keyword_tags={this.state.keyword.tags} />
 					</div>
 					<div className="col-md-1"></div>
 				</div>

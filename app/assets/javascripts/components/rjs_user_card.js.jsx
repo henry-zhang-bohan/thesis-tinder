@@ -29,6 +29,10 @@ var UserCard = React.createClass({
 		for (var i = 0; i < this.props.skill_tags.length; i++) {
 			skill_tags.push(<ThesisTinderTag text={this.props.skill_tags[i]} canremove="false" key={this.props.skill_tags[i]} />);
 		}
+		var keyword_tags = [];
+		for (var i = 0; i < this.props.keyword_tags.length; i++) {
+			keyword_tags.push(<ThesisTinderTag text={this.props.keyword_tags[i]} canremove="false" key={this.props.keyword_tags[i]} color="rgb(210,210,210)" />);
+		}
 		return (
 			<div className="card">
 				<div className="card-block">
@@ -40,7 +44,7 @@ var UserCard = React.createClass({
 				<div className="card-block">
 					<p className="card-text">{this.props.text}</p>
 					<hr />
-					<div className="card-text" style={{ display: this.state.display, margin: 0 }}>{skill_tags}<hr /></div>
+					<div className="card-text" style={{ display: this.state.display, margin: 0 }}>{keyword_tags}<hr />{skill_tags}<hr /></div>
 					<a href={this.props.link} className="card-link" target="_blank">Link</a>
 					<a href="#" className="card-link" onClick={this.detailHandler}>{this.state.detail}</a>
 				</div>
