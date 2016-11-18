@@ -42,10 +42,11 @@ var ThesisTinderInput = React.createClass({
 		var status = this.determineStatus(this.props.data.status);
 		var div_class = status[0];
 		var input_class = status[1];
+		var input = this.props.readonly === "true" ? <input type="text" className={input_class} value={this.props.data.content} onChange={this.updateHandler} name={this.props.data.name} onKeyPress={this.keyPressHandler} ref="input" readOnly /> : <input type="text" className={input_class} value={this.props.data.content} onChange={this.updateHandler} name={this.props.data.name} onKeyPress={this.keyPressHandler} ref="input" />;
 		return (
 			<div className={div_class}>
 				<label className="form-control-label"><b>{this.props.data.label}</b></label>
-				<input type="text" className={input_class} value={this.props.data.content} onChange={this.updateHandler} name={this.props.data.name} onKeyPress={this.keyPressHandler} ref="input" />
+				{input}
 				<div className="form-control-feedback"><small>{this.props.data.message}</small></div>
 			</div>
 		);

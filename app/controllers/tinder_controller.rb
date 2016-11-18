@@ -11,6 +11,10 @@ class TinderController < ApplicationController
 	end
 
 	def login_form
+		if params[:email].strip == ''
+			return redirect_to '/login'
+		end
+
 		if params[:identity] == "Student"
 			cookies.signed[:identity] = "student"
 			if Student.find_by(email: params[:email]) != nil
@@ -67,7 +71,7 @@ class TinderController < ApplicationController
 			@likes = []
 		end
 		@professor_list = []
-		Professor.all.each do |professor|
+		Professor.where.not(first_name: nil).where.not(last_name: nil).each do |professor|
 			@professor_list.push({
 				id: professor.id,
 				identifier: "professor_#{professor.id}",
@@ -163,7 +167,7 @@ class TinderController < ApplicationController
 			@likes = []
 		end
 		@student_list = []
-		Student.all.each do |student|
+		Student.where.not(first_name: nil).where.not(last_name: nil).each do |student|
 			@student_list.push({
 				id: student.id,
 				identifier: "student_#{student.id}",

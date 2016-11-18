@@ -529,7 +529,7 @@ var UserProfile = React.createClass({
 						<form encType="multipart/form-data" action={this.props.updateAction} method="post">
 							<input type="hidden" name="authenticity_token" value={this.state.token} />
 							<input type="hidden" name="id" value={this.state.user.id} />
-							<ThesisTinderInput data={this.state.email} onchange={this.updateEmail} />
+							<ThesisTinderInput data={this.state.email} onchange={this.updateEmail} readonly="true" />
 							<ThesisTinderInput data={this.state.first_name} onchange={this.updateFirstName} />
 							<ThesisTinderInput data={this.state.last_name} onchange={this.updateLastName} />
 							<ThesisTinderInput data={this.state.department} onchange={this.updateDepartment} autocompleteURL={this.state.department.autocompleteURL} />
