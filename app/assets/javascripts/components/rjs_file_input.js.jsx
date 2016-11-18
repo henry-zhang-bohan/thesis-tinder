@@ -36,7 +36,7 @@ var ThesisTinderFileInput = React.createClass({
 		return (
 			<div className={div_class}>
 				<label className="form-control-label"><b>{this.props.data.label}</b></label>
-				<input type="file" className={input_class} onChange={this.updateHandler} name={this.props.data.name} />
+				<input type="file" className={input_class} onChange={this.updateHandler} name={this.props.data.name} accept="image/*" />
 				<div className="form-control-feedback"><small>{this.props.data.message}</small></div>
 			</div>
 		);

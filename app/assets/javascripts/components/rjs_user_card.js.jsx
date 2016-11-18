@@ -56,7 +56,7 @@ var UserCard = React.createClass({
 				<img alt={this.props.title} src={this.props.imageURL}
 				style={{ width: "100%", height: 200, objectFit: "cover" }} />
 				<div className="card-block">
-					<p className="card-text" style={{ height: 75, overflow: "scroll" }}>{this.props.text}</p>
+					<p className="card-text" style={{ height: "6rem", overflow: "hidden" }}>{this.props.text}</p>
 					<hr />
 					<div className="card-text" style={{ display: this.state.display, margin: 0 }}>{keyword_tags}<hr />{skill_tags}<hr /></div>
 					<a href={this.props.link} className="card-link" target="_blank">Link</a>
